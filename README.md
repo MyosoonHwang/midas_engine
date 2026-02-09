@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="./thumbnail.png" width="800px">
+  <h1>🦄 Midas Engine V3: AI Category-Specific Pricing System</h1>
+  <p><b>AI가 제안하는 황금빛 거래의 시작, 미다스 엔진</b></p>
+</div>
+
 # 🦄 Midas Engine V3: AI Category-Specific Pricing System
 Midas Engine은 단순한 가격 비교를 넘어, AI가 시장 여론과 실거래 데이터를 분석하여 최적의 중고 거래 가격을 제안하는 지능형 자산 가치 분석 플랫폼입니다.
 
