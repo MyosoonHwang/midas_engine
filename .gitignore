@@ -1,0 +1,21 @@
+# 1. 보안 (절대 올리면 안 됨)
+.env
+
+# 2. 파이썬 임시 파일 (디지털 먼지)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 3. 로컬 데이터베이스 및 로그
+midas.db
+cache_db.json
+*.log
+
+# 4. 가상환경
+venv/
+.venv/
+env/
+
+# 5. OS 임시 파일
+.DS_Store
+Thumbs.db
