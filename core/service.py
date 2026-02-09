@@ -5,40 +5,40 @@ from datetime import datetime, timedelta
 
 class MidasService:
     def __init__(self):
-        self.naver, self.bungae, self.ai = NaverShoppingClient(), BungaeClient(), AIAnalyst()
+        self.naver = NaverShoppingClient()
+        self.bungae = BungaeClient()
+        self.ai = AIAnalyst()
 
     def get_analysis(self, product, mode, category, progress_callback=None):
         # 1. 라이브 데이터 수집
-        if progress_callback: progress_callback(20, "시장 매물 전수 조사 중...")
+        if progress_callback: progress_callback(20, "네이버 쇼핑 분석 중...")
         n_data = self.naver.search_products(product, category)
+        
+        if progress_callback: progress_callback(40, "번개장터 매물 크롤링 중...")
         b_data = self.bungae.search_products(product, category)
         
-        n_p = n_data['avg'] if n_data else 0
-        b_p = b_data['avg'] if b_data else 0
-        raw_avg = (n_p + b_p) // 2 if n_p and b_p else (n_p or b_p)
+        n_p, b_p = (n_data['avg'] if n_data else 0), (b_data['avg'] if b_data else 0)
+        raw_avg = (n_p + b_p)//2 if n_p and b_p else (n_p or b_p)
 
-        # 2. AI 정밀 시세 교정
-        if progress_callback: progress_callback(60, "AI 전문가 시세 감정 중...")
+        # 2. AI 시세 교정
+        if progress_callback: progress_callback(70, "AI 전문가 정밀 감정 중...")
         reviews = self.naver.search_blog_reviews(product)
         ai_res = self.ai.analyze_sentiment(product, reviews, raw_avg, category, mode)
         
         base_price = ai_res.get('estimated_price', raw_avg)
         score = ai_res.get('score', 0)
 
-        # 3. ⚖️ 구매/판매 마진 분리 로직 (가장 중요!)
+        # 3. ⚖️ 모드별 가격 차별화 로직
         policy = Config.MARGINS[mode]
-        if score >= 5: # 아주 유리한 상황
-            target_price = int(base_price * policy['high'])
-        elif score <= -3: # 아주 불리한 상황
-            target_price = int(base_price * policy['low'])
-        else: # 보통
-            target_price = int(base_price * policy['normal'])
+        if score >= 5: target_price = int(base_price * policy['high'])
+        elif score <= -3: target_price = int(base_price * policy['low'])
+        else: target_price = int(base_price * policy['normal'])
 
-        # 4. 결과 저장
+        # 4. DB 저장
         try:
-            db.session.add(SearchLog(keyword=product, mode=mode, category=category))
             db.session.add(PriceRecord(keyword=product, category=category, naver_price=n_p, bungae_price=b_p, 
                                       ai_estimated_price=base_price, ai_score=score, ai_reason=ai_res.get('reason')))
+            db.session.add(SearchLog(keyword=product, mode=mode, category=category))
             db.session.commit()
         except: db.session.rollback()
 

@@ -36,7 +36,6 @@
         .toggle-btn.active { color: white; }
         .toggle-bg { position: absolute; top: 5px; left: 5px; width: 50%; height: calc(100% - 10px); background: var(--buy-color); border-radius: 25px; transition: all 0.3s ease; z-index: 1; }
         
-        /* 🆕 카테고리 선택기 스타일 */
         .category-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
         .cat-btn { 
             padding: 10px 2px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
@@ -62,10 +61,11 @@
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1;} }
         
         .price-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .target-price { font-size: 2rem; font-weight: bold; text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .target-price { font-size: 2.2rem; font-weight: bold; text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
-        .map-btn { margin-top: 10px; width: 100%; padding: 12px; background: #03c75a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .ai-reason { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; font-size: 0.85rem; color: #ddd; line-height: 1.6; border-left: 3px solid var(--accent-color); margin-top: 15px; }
+        .map-btn { margin-top: 10px; width: 100%; padding: 15px; background: #03c75a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .map-btn:hover { background: #02b351; transform: scale(1.02); }
+        .ai-reason { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; font-size: 0.9rem; color: #ddd; line-height: 1.6; border-left: 3px solid var(--accent-color); margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -78,8 +78,8 @@
 
         <div class="toggle-container">
             <div class="toggle-bg" id="toggleBg"></div>
-            <button class="toggle-btn active" onclick="setMode('buy')" id="btnBuy">🛒 구매</button>
-            <button class="toggle-btn" onclick="setMode('sell')" id="btnSell">💰 판매</button>
+            <button class="toggle-btn active" onclick="setMode('buy')" id="btnBuy"><i class="fa-solid fa-cart-shopping"></i> 구매 (살래요)</button>
+            <button class="toggle-btn" onclick="setMode('sell')" id="btnSell"><i class="fa-solid fa-sack-dollar"></i> 판매 (팔래요)</button>
         </div>
 
         <div class="category-container" id="categoryContainer">
@@ -91,9 +91,9 @@
             <button class="cat-btn" onclick="setCat('etc', this)"><i class="fa-solid fa-ellipsis"></i>기타</button>
         </div>
 
-        <input type="text" id="productInput" placeholder="검색어를 입력하세요..." onkeypress="if(event.key==='Enter') startAnalysis()">
+        <input type="text" id="productInput" placeholder="상품명이나 검색어를 입력하세요..." onkeypress="if(event.key==='Enter') startAnalysis()">
         
-        <button onclick="startAnalysis()" id="analyzeBtn" class="action-btn">분석 시작</button>
+        <button onclick="startAnalysis()" id="analyzeBtn" class="action-btn">최적가 분석 시작</button>
 
         <div class="progress-wrapper" id="progressWrapper">
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
@@ -101,8 +101,8 @@
         </div>
 
         <div class="result-box" id="resultBox">
-            <div class="price-row"><span style="color:#2db400">N 네이버 평균</span><span id="avgPrice">-</span></div>
-            <div class="price-row" id="bungaeRow" style="display:none;"><span style="color:#d63031">⚡ 번개장터 평균</span><span id="bungaePrice">-</span></div>
+            <div class="price-row"><span style="color:#2db400"><i class="fa-solid fa-n"></i> 네이버 평균</span><span id="avgPrice">-</span></div>
+            <div class="price-row" id="bungaeRow" style="display:none;"><span style="color:#d63031"><i class="fa-solid fa-bolt"></i> 번개장터 평균</span><span id="bungaePrice">-</span></div>
             <div class="target-price" id="targetPriceDisplay"></div>
             <button id="mapBtn" class="map-btn"><i class="fa-solid fa-map-location-dot"></i> 매장 찾기</button>
             <div class="ai-reason" id="aiReason"></div>
@@ -111,15 +111,25 @@
 
     <script>
         let currentMode = 'buy';
-        let selCat = 'general'; // 🆕 기본 카테고리
+        let selCat = 'general';
         let pollingInterval = null;
 
         function setMode(mode) {
             currentMode = mode;
             const bg = document.getElementById('toggleBg');
-            bg.style.left = (mode === 'buy') ? '5px' : '50%';
-            bg.style.background = (mode === 'buy') ? '#2ed573' : '#ff4757';
-            document.getElementById('analyzeBtn').style.background = (mode === 'buy') ? '#2ed573' : '#ff4757';
+            const btnBuy = document.getElementById('btnBuy');
+            const btnSell = document.getElementById('btnSell');
+            const actionBtn = document.getElementById('analyzeBtn');
+
+            if (mode === 'buy') {
+                bg.style.left = '5px'; bg.style.background = '#2ed573';
+                btnBuy.classList.add('active'); btnSell.classList.remove('active');
+                actionBtn.style.background = '#2ed573'; actionBtn.innerText = "최적 구매가 분석";
+            } else {
+                bg.style.left = '50%'; bg.style.background = '#ff4757';
+                btnSell.classList.add('active'); btnBuy.classList.remove('active');
+                actionBtn.style.background = '#ff4757'; actionBtn.innerText = "최적 판매가 분석";
+            }
         }
 
         function setCat(c, b) {
@@ -162,30 +172,51 @@
         }
 
         function showResult(data) {
-        document.getElementById('resultBox').style.display = 'block';
-        const fmt = n => new Intl.NumberFormat('ko-KR').format(n) + "원";
-        
-        // 1. 가격 표시
-        document.getElementById('avgPrice').innerText = fmt(data.market_price.avg);
-        const bRow = document.getElementById('bungaeRow');
-        if (data.bungae_price.avg > 0) {
-            bRow.style.display = 'flex';
-            document.getElementById('bungaePrice').innerText = fmt(data.bungae_price.avg);
-        }
-        
-        // 2. 추천 가격 및 색상 (구매/판매 확연히 구분)
-        const targetDiv = document.getElementById('targetPriceDisplay');
-        const isBuy = data.mode === 'buy';
-        targetDiv.style.color = isBuy ? '#2ed573' : '#ff4757';
-        targetDiv.innerHTML = `
-            <small style="display:block; color:#aaa; font-size:1rem;">
-                ${isBuy ? '💰 지금 사면 좋은 가격' : '💎 지금 팔면 좋은 가격'}
-            </small>
-            ${fmt(data.recommendation.target_price)}
-        `;
+            document.getElementById('resultBox').style.display = 'block';
+            const fmt = n => new Intl.NumberFormat('ko-KR').format(n) + "원";
+            
+            document.getElementById('avgPrice').innerText = fmt(data.market_price.avg);
+            const bRow = document.getElementById('bungaeRow');
+            if (data.bungae_price && data.bungae_price.avg > 0) {
+                bRow.style.display = 'flex';
+                document.getElementById('bungaePrice').innerText = fmt(data.bungae_price.avg);
+            } else { bRow.style.display = 'none'; }
 
-        document.getElementById('aiReason').innerText = data.ai_analysis.reason;
-    }
+            const targetDiv = document.getElementById('targetPriceDisplay');
+            const isBuy = data.mode === 'buy';
+            targetDiv.style.color = isBuy ? '#2ed573' : '#ff4757';
+            targetDiv.innerHTML = `<small style="display:block; color:#aaa; font-size:1rem;">${isBuy ? '💰 추천 구매가' : '💎 목표 판매가'}</small>${fmt(data.recommendation.target_price)}`;
+            
+            document.getElementById('aiReason').innerText = data.ai_analysis.reason;
+
+            // 🚀 [스마트 매장 찾기 복구 및 강화]
+            updateMapButton(data.category, data.market_price.category, data.product);
+        }
+
+        function updateMapButton(selectedCategory, naverCategory, productName) {
+            const btn = document.getElementById('mapBtn');
+            let query = "";
+            const name = productName.toLowerCase();
+
+            // 1순위: 선택된 대분류 기반
+            if (selectedCategory === 'car') query = "근처 중고차 매매단지";
+            else if (selectedCategory === 'house') query = "근처 공인중개사";
+            else if (selectedCategory === 'book') query = "근처 중고서점";
+            else if (selectedCategory === 'cloth') query = "근처 빈티지샵";
+            // 2순위: 네이버 카테고리/키워드 매칭
+            else if (name.includes("아이폰") || name.includes("갤럭시") || (naverCategory && naverCategory.includes("휴대폰"))) {
+                query = "근처 휴대폰 성지";
+            } else if (name.includes("나이키") || name.includes("운동화") || (naverCategory && naverCategory.includes("신발"))) {
+                query = "근처 신발 가게";
+            } else if (naverCategory && (naverCategory.includes("가전") || naverCategory.includes("PC"))) {
+                query = "근처 하이마트";
+            } else {
+                query = `근처 ${productName} 매장`;
+            }
+
+            btn.innerHTML = `<i class="fa-solid fa-map-location-dot"></i> ${query} 찾기`;
+            btn.onclick = () => window.open(`https://map.naver.com/p/search/${query}`, '_blank');
+        }
     </script>
 </body>
 </html>
