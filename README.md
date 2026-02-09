@@ -1,6 +1,5 @@
 <div align="center">
   <img src="./thumbnail.png" width="800px">
-  <h1>🦄 Midas Engine V3: AI Category-Specific Pricing System</h1>
 </div>
 
 # 🦄 Midas Engine V3: AI Category-Specific Pricing System
