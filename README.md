@@ -1,7 +1,6 @@
 <div align="center">
   <img src="./thumbnail.png" width="800px">
   <h1>🦄 Midas Engine V3: AI Category-Specific Pricing System</h1>
-  <p><b>AI가 제안하는 황금빛 거래의 시작, 미다스 엔진</b></p>
 </div>
 
 # 🦄 Midas Engine V3: AI Category-Specific Pricing System
