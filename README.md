@@ -25,17 +25,17 @@ Midas Engine은 단순한 가격 비교를 넘어, AI가 시장 여론과 실거
 실시간 프로그레스 바: 분석 단계를 시각화하여 데이터 수집부터 AI 분석까지의 과정을 사용자에게 실시간으로 보고합니다.
 
 # 🛠 Tech Stack
-## Backend: Flask (Python)
+### Backend: Flask (Python)
 
-## Database: SQLite & Flask-SQLAlchemy (Search Logs & Price Caching)
+### Database: SQLite & Flask-SQLAlchemy (Search Logs & Price Caching)
 
-## AI: Groq API (Llama 3.3), Google Gemini API (2.5 Flash)
+### AI: Groq API (Llama 3.3), Google Gemini API (2.5 Flash)
 
-## Crawler: Selenium (Bungae Market), Naver Shopping API
+### Crawler: Selenium (Bungae Market), Naver Shopping API
 
-## Frontend: Glassmorphism UI (HTML5, CSS3, JavaScript)
+### Frontend: Glassmorphism UI (HTML5, CSS3, JavaScript)
 
-# 📂 프로젝트 구조 (Structure)
+## 📂 프로젝트 구조 (Structure)
 ### app.py: 비동기 작업 관리 및 Flask 서버 메인 로직
 
 ### config.py: API 키 관리 및 구매/판매 마진 정책(MARGINS) 설정
@@ -69,4 +69,6 @@ AI 모델 선택 및 서버 실행:
 python select_model.py
 python app.py
 ```
-Developed by Hwang Woo Hyeok GitHub: MyosoonHwang/midas_engine
+Developed by Hwang Woo Hyeok 
+
+GitHub: MyosoonHwang/midas_engine
